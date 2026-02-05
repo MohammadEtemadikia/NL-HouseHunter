@@ -8,8 +8,8 @@ from pathlib import Path
 from playwright.async_api import async_playwright
 from telegram import Bot
 
-TELEGRAM_TOKEN = os.environ["8557969948:AAEeu0cgHqM7rOEXEkXtroP-WUn_t4EmKfo"]
-CHAT_ID = os.environ["965372879"]
+TELEGRAM_TOKEN = os.environ["TELEGRAM_TOKEN"]
+CHAT_ID = os.environ["TELEGRAM_CHAT_ID"]
 DATA_FILE = Path("seen_ads.json")
 
 seen_ads = set()
