@@ -40,18 +40,46 @@ def main():
     new_count = 0
 
     for ad in ads:
-        a = ad.select_one("a.listing-search-item__link")
-        img = ad.select_one("img")
-
-        if not a:
+        link_tag = ad.select_one("a.listing-search-item__link")
+        if not link_tag:
             continue
 
-        link = "https://www.pararius.com" + a["href"]
+        link = "https://www.pararius.com" + link_tag["href"]
         if link in seen:
             continue
 
-        image = img["src"] if img else None
-        send(f"🏠 آگهی جدید Pararius\n{link}", image)
+        # title
+        title_tag = ad.select_one("h2.listing-search-item__title")
+        title = title_tag.get_text(strip=True) if title_tag else "Apartment for rent"
+
+        # city
+        city_tag = ad.select_one("div.listing-search-item__sub-title")
+        city = city_tag.get_text(strip=True) if city_tag else "Unknown city"
+
+        # price
+        price_tag = ad.select_one("div.listing-search-item__price")
+        price = price_tag.get_text(strip=True) if price_tag else "Price unknown"
+
+        # size (m²)
+        size = "Unknown size"
+        for li in ad.select("li.illustrated-features__item"):
+            if "m²" in li.get_text():
+                size = li.get_text(strip=True)
+                break
+
+        # image
+        img_tag = ad.select_one("img")
+        image = img_tag["src"] if img_tag and img_tag.has_attr("src") else None
+
+        message = (
+            f"🏠 {title}\n\n"
+            f"📍 {city}\n"
+            f"📐 {size}\n"
+            f"💰 {price}\n\n"
+            f"🔗 {link}"
+        )
+
+        send(message, image)
         seen.append(link)
         new_count += 1
 
